@@ -1,0 +1,988 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureStack | Security Deposit Portal</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: #f3f6fc;
+    color: #17243b;
+}
+
+/* Navbar */
+.navbar {
+    height: 70px;
+    background: #102747;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #35c4e8;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    background: #35c4e8;
+    color: #102747;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    min-height: calc(100vh - 70px);
+}
+
+.sidebar {
+    width: 235px;
+    background: #102747;
+    padding: 25px 15px;
+    color: white;
+}
+
+.sidebar h3 {
+    color: #91a8c6;
+    font-size: 12px;
+    margin: 15px 12px;
+    text-transform: uppercase;
+}
+
+.sidebar a {
+    display: block;
+    padding: 14px;
+    margin: 6px 0;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #d4e0ef;
+    cursor: pointer;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #1d426d;
+    color: #35c4e8;
+}
+
+.main {
+    flex: 1;
+    padding: 30px;
+    min-width: 0;
+}
+
+/* Heading */
+.heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.heading h1 {
+    font-size: 27px;
+}
+
+.heading p {
+    color: #74839a;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.btn {
+    border: none;
+    padding: 12px 19px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    background: #087dbb;
+    color: white;
+}
+
+.btn:hover {
+    background: #056495;
+}
+
+/* Statistics */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 3px 15px #17243b0b;
+    border-left: 4px solid #087dbb;
+}
+
+.stat-card p {
+    color: #7c899c;
+    font-size: 14px;
+}
+
+.stat-card h2 {
+    font-size: 27px;
+    margin-top: 12px;
+}
+
+.stat-card small {
+    color: #159b75;
+}
+
+/* Panels */
+.panel {
+    background: white;
+    border-radius: 12px;
+    padding: 23px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 15px #17243b0b;
+}
+
+.panel h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th, td {
+    text-align: left;
+    padding: 15px 12px;
+    border-bottom: 1px solid #edf0f5;
+    font-size: 14px;
+}
+
+th {
+    color: #74839a;
+    background: #f8fafd;
+}
+
+.status {
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.approved {
+    background: #d9f8e9;
+    color: #148451;
+}
+
+.pending {
+    background: #fff1d2;
+    color: #a66a00;
+}
+
+.rejected {
+    background: #ffe0e0;
+    color: #c53d3d;
+}
+
+/* Form */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d9e0ea;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #087dbb;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+/* Pages */
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.notice {
+    padding: 16px;
+    background: #e7f5ff;
+    border-radius: 9px;
+    color: #155477;
+    margin-bottom: 22px;
+    font-size: 14px;
+}
+
+.search {
+    padding: 11px;
+    border: 1px solid #d9e0ea;
+    border-radius: 7px;
+    width: 250px;
+    max-width: 100%;
+    margin-bottom: 15px;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #8a96a8;
+    font-size: 13px;
+}
+
+@media(max-width: 950px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 650px) {
+    .navbar {
+        padding: 0 15px;
+    }
+
+    .sidebar {
+        width: 65px;
+        padding: 15px 5px;
+    }
+
+    .sidebar h3 {
+        display: none;
+    }
+
+    .sidebar a {
+        font-size: 0;
+        text-align: center;
+        padding: 15px 3px;
+    }
+
+    .sidebar a::first-letter {
+        font-size: 17px;
+    }
+
+    .main {
+        padding: 17px 12px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP NAVIGATION -->
+<header class="navbar">
+    <div class="logo">Secure<span>Stack</span></div>
+
+    <div class="profile">
+        <span>Admin Portal</span>
+        <div class="avatar">A</div>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <h3>Main Menu</h3>
+
+    <a class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</a>
+
+    <a onclick="showPage('newDeposit',this)">➕ New Deposit</a>
+
+    <a onclick="showPage('records',this)">📁 Deposit Records</a>
+
+    <a onclick="showPage('tracking',this)">🔍 Track Status</a>
+
+    <h3>Account</h3>
+
+    <a onclick="showPage('reports',this)">📊 Reports</a>
+
+    <a onclick="showPage('help',this)">❓ Help & Support</a>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- DASHBOARD PAGE -->
+<section id="dashboard" class="page active">
+
+    <div class="heading">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome to SecureStack Security Deposit Management System</p>
+        </div>
+
+        <button class="btn"
+        onclick="showPage('newDeposit')">
+        + New Application
+        </button>
+    </div>
+
+    <div class="notice">
+        Welcome! Manage your Security Deposits and Fixed Deposit
+        Receipts through one centralized digital platform.
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <p>Total Applications</p>
+            <h2 id="totalCount">3</h2>
+            <small>All submitted records</small>
+        </div>
+
+        <div class="stat-card">
+            <p>Approved Deposits</p>
+            <h2 id="approvedCount">1</h2>
+            <small>Successfully approved</small>
+        </div>
+
+        <div class="stat-card">
+            <p>Pending Requests</p>
+            <h2 id="pendingCount">2</h2>
+            <small>Awaiting verification</small>
+        </div>
+
+        <div class="stat-card">
+            <p>Total Deposit Value</p>
+            <h2 id="totalValue">₹8.5L</h2>
+            <small>Illustrative sample data</small>
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Recent Applications</h2>
+
+        <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Applicant</th>
+                    <th>Deposit Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="dashboardTable"></tbody>
+        </table>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- NEW DEPOSIT PAGE -->
+<section id="newDeposit" class="page">
+
+    <div class="heading">
+        <div>
+            <h1>New Deposit Application</h1>
+            <p>Submit your Security Deposit or FDR details</p>
+        </div>
+    </div>
+
+    <div class="panel">
+
+        <h2>Applicant Information</h2>
+
+        <form id="depositForm" class="form-grid">
+
+            <div class="form-group">
+                <label>Applicant Name *</label>
+                <input id="applicant" type="text"
+                placeholder="Enter full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address *</label>
+                <input id="email" type="email"
+                placeholder="example@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mobile Number *</label>
+                <input id="mobile" type="tel"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                placeholder="10 digit mobile number" required>
+            </div>
+
+            <div class="form-group">
+                <label>Organization / Department</label>
+                <input id="organization" type="text"
+                placeholder="Enter organization name">
+            </div>
+
+            <div class="form-group">
+                <label>Deposit Type *</label>
+                <select id="depositType" required>
+                    <option value="">Select deposit type</option>
+                    <option>Security Deposit</option>
+                    <option>Fixed Deposit Receipt (FDR)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Deposit Amount (₹) *</label>
+                <input id="amount" type="number"
+                min="1" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-group">
+                <label>Bank Name *</label>
+                <input id="bank" type="text"
+                placeholder="Enter bank name" required>
+            </div>
+
+            <div class="form-group">
+                <label>FDR / Reference Number</label>
+                <input id="reference" type="text"
+                placeholder="Enter reference number">
+            </div>
+
+            <div class="form-group">
+                <label>Issue Date *</label>
+                <input id="issueDate" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label>Expiry Date *</label>
+                <input id="expiryDate" type="date" required>
+            </div>
+
+            <div class="form-group full">
+                <label>Purpose / Description</label>
+                <textarea id="purpose" rows="3"
+                placeholder="Enter deposit purpose"></textarea>
+            </div>
+
+            <div class="form-group full">
+                <label>Upload FDR / Supporting Document</label>
+                <input id="document" type="file"
+                accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+
+            <div class="full">
+                <button type="submit" class="btn">
+                    Submit Application
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- RECORDS PAGE -->
+<section id="records" class="page">
+
+    <div class="heading">
+        <div>
+            <h1>Deposit Records</h1>
+            <p>View and manage all applications</p>
+        </div>
+    </div>
+
+    <div class="panel">
+
+        <h2>All Applications</h2>
+
+        <input class="search" id="searchInput"
+        placeholder="Search by name or ID..."
+        oninput="renderRecords()">
+
+        <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Applicant</th>
+                    <th>Deposit Type</th>
+                    <th>Amount</th>
+                    <th>Bank</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="recordsTable"></tbody>
+        </table>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- TRACKING PAGE -->
+<section id="tracking" class="page">
+
+    <div class="heading">
+        <div>
+            <h1>Track Application</h1>
+            <p>Check the current status of your deposit request</p>
+        </div>
+    </div>
+
+    <div class="panel">
+
+        <h2>Application Status Tracking</h2>
+
+        <div class="form-group">
+            <label>Enter Application ID</label>
+            <input id="trackId"
+            placeholder="Example: SS1001">
+        </div>
+
+        <br>
+
+        <button class="btn" onclick="trackApplication()">
+            Track Application
+        </button>
+
+        <div id="trackResult" style="margin-top:25px;"></div>
+
+    </div>
+
+</section>
+
+
+<!-- REPORTS PAGE -->
+<section id="reports" class="page">
+
+    <div class="heading">
+        <div>
+            <h1>Reports & Analytics</h1>
+            <p>Overview of security deposit applications</p>
+        </div>
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <p>Total Applications</p>
+            <h2 id="reportTotal">3</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Approved</p>
+            <h2 id="reportApproved">1</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Pending</p>
+            <h2 id="reportPending">2</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Rejected</p>
+            <h2 id="reportRejected">0</h2>
+        </div>
+
+    </div>
+
+    <div class="panel">
+        <h2>Application Summary</h2>
+        <div id="reportSummary"></div>
+        <br>
+        <button class="btn" onclick="window.print()">
+            Print Report
+        </button>
+    </div>
+
+</section>
+
+
+<!-- HELP PAGE -->
+<section id="help" class="page">
+
+    <div class="heading">
+        <div>
+            <h1>Help & Support</h1>
+            <p>Information about the SecureStack portal</p>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>How to use the portal?</h2>
+
+        <p>1. Open New Deposit to submit an application.</p>
+        <br>
+        <p>2. Enter applicant and bank details.</p>
+        <br>
+        <p>3. Submit your deposit application.</p>
+        <br>
+        <p>4. Visit Deposit Records to view applications.</p>
+        <br>
+        <p>5. Use Track Status to check your application.</p>
+    </div>
+
+    <div class="panel">
+        <h2>Project Information</h2>
+        <p><b>Project:</b> Security Deposit / FDR Portal</p>
+        <p><b>Team:</b> SecureStack</p>
+        <p><b>Event:</b> Smart India Hackathon 2026</p>
+        <p><b>Problem ID:</b> SIH26265</p>
+    </div>
+
+</section>
+
+<footer class="footer">
+    © 2026 Team SecureStack | Smart India Hackathon
+</footer>
+
+</main>
+</div>
+
+
+<script>
+
+// Sample records for frontend demonstration
+let applications = [
+    {
+        id: "SS1001",
+        name: "Rahul Kumar",
+        type: "Fixed Deposit Receipt (FDR)",
+        amount: 500000,
+        bank: "SBI",
+        date: "2026-10-25",
+        status: "Approved"
+    },
+    {
+        id: "SS1002",
+        name: "Priya Sharma",
+        type: "Security Deposit",
+        amount: 200000,
+        bank: "HDFC Bank",
+        date: "2026-10-27",
+        status: "Pending"
+    },
+    {
+        id: "SS1003",
+        name: "Amit Verma",
+        type: "Fixed Deposit Receipt (FDR)",
+        amount: 150000,
+        bank: "ICICI Bank",
+        date: "2026-10-29",
+        status: "Pending"
+    }
+];
+
+
+// Navigation
+function showPage(pageId, element) {
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+
+    document.querySelectorAll(".sidebar a").forEach(link => {
+        link.classList.remove("active");
+    });
+
+    if(element) {
+        element.classList.add("active");
+    }
+
+    updateDashboard();
+}
+
+
+// Format currency
+function formatMoney(amount) {
+    return "₹" + Number(amount).toLocaleString("en-IN");
+}
+
+
+// Status badge
+function statusBadge(status) {
+
+    let css = status.toLowerCase();
+
+    return `<span class="status ${css}">
+        ${status}
+    </span>`;
+}
+
+
+// Dashboard table
+function renderDashboard() {
+
+    document.getElementById("dashboardTable").innerHTML =
+        applications.slice(-5).reverse().map(app => `
+        <tr>
+            <td>${app.id}</td>
+            <td>${app.name}</td>
+            <td>${app.type}</td>
+            <td>${formatMoney(app.amount)}</td>
+            <td>${app.date}</td>
+            <td>${statusBadge(app.status)}</td>
+        </tr>
+    `).join("");
+}
+
+
+// Records table
+function renderRecords() {
+
+    const query = document.getElementById("searchInput")
+        .value.toLowerCase();
+
+    const filtered = applications.filter(app =>
+        app.name.toLowerCase().includes(query) ||
+        app.id.toLowerCase().includes(query)
+    );
+
+    document.getElementById("recordsTable").innerHTML =
+        filtered.map(app => `
+        <tr>
+            <td>${app.id}</td>
+            <td>${app.name}</td>
+            <td>${app.type}</td>
+            <td>${formatMoney(app.amount)}</td>
+            <td>${app.bank}</td>
+            <td>${statusBadge(app.status)}</td>
+        </tr>
+    `).join("") || `
+        <tr><td colspan="6">No applications found.</td></tr>
+    `;
+}
+
+
+// Update dashboard statistics
+function updateDashboard() {
+
+    const total = applications.length;
+
+    const approved = applications.filter(
+        a => a.status === "Approved"
+    ).length;
+
+    const pending = applications.filter(
+        a => a.status === "Pending"
+    ).length;
+
+    const rejected = applications.filter(
+        a => a.status === "Rejected"
+    ).length;
+
+    const totalValue = applications.reduce(
+        (sum, a) => sum + Number(a.amount), 0
+    );
+
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("approvedCount").textContent = approved;
+    document.getElementById("pendingCount").textContent = pending;
+
+    document.getElementById("totalValue").textContent =
+        "₹" + (totalValue / 100000).toFixed(2) + "L";
+
+    document.getElementById("reportTotal").textContent = total;
+    document.getElementById("reportApproved").textContent = approved;
+    document.getElementById("reportPending").textContent = pending;
+    document.getElementById("reportRejected").textContent = rejected;
+
+    document.getElementById("reportSummary").innerHTML =
+        `<p>Total applications: ${total}</p>
+         <br>
+         <p>Approved: ${approved}</p>
+         <br>
+         <p>Pending: ${pending}</p>
+         <br>
+         <p>Rejected: ${rejected}</p>`;
+
+    renderDashboard();
+    renderRecords();
+}
+
+
+// Submit application
+document.getElementById("depositForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const issue = document.getElementById("issueDate").value;
+    const expiry = document.getElementById("expiryDate").value;
+
+    if(expiry <= issue) {
+        alert("Expiry date must be after issue date.");
+        return;
+    }
+
+    const file = document.getElementById("document").files[0];
+
+    if(file && file.size > 5 * 1024 * 1024) {
+        alert("Document must be smaller than 5 MB.");
+        return;
+    }
+
+    const application = {
+
+        id: "SS" + (1001 + applications.length),
+
+        name: document.getElementById("applicant").value,
+
+        type: document.getElementById("depositType").value,
+
+        amount: Number(document.getElementById("amount").value),
+
+        bank: document.getElementById("bank").value,
+
+        date: issue,
+
+        status: "Pending"
+
+    };
+
+    applications.push(application);
+
+    updateDashboard();
+
+    alert(
+        "Application submitted successfully!\nApplication ID: " +
+        application.id
+    );
+
+    this.reset();
+
+    showPage("records");
+
+});
+
+
+// Track application
+function trackApplication() {
+
+    const id = document.getElementById("trackId")
+        .value.trim().toUpperCase();
+
+    const result = document.getElementById("trackResult");
+
+    const app = applications.find(
+        a => a.id.toUpperCase() === id
+    );
+
+    if(!app) {
+
+        result.innerHTML =
+            `<p style="color:red;">Application not found. Please check the ID.</p>`;
+
+        return;
+    }
+
+    result.innerHTML = `
+        <div class="notice">
+            <h3>Application Found!</h3>
+            <br>
+            <p><b>Application ID:</b> ${app.id}</p>
+            <br>
+            <p><b>Applicant:</b> ${app.name}</p>
+            <br>
+            <p><b>Deposit Type:</b> ${app.type}</p>
+            <br>
+            <p><b>Amount:</b> ${formatMoney(app.amount)}</p>
+            <br>
+            <p><b>Bank:</b> ${app.bank}</p>
+            <br>
+            <p><b>Current Status:</b> ${statusBadge(app.status)}</p>
+        </div>
+    `;
+
+}
+
+
+// Initial loading
+updateDashboard();
+
+</script>
+
+</body>
+</html>
+
